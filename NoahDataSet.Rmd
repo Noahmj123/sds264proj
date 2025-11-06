@@ -37,12 +37,21 @@ url_text
 
 
 ```{r}
-player_url <- c("l/lavinza01", "f/foxde01", "d/derozde01", "s/sabondo01", "murrake02", #kings players
+player_url <- c("l/lavinza01", "f/foxde01", "d/derozde01", "s/sabondo01", "murrake02",  #kings players
                 "b/bookede01", "d/duranke01", "b/bealbr01", "j/jonesty01", "o/onealro01", #suns players
                 "h/hardeja01", "l/leonaka01", "z/zubaciv01", "p/powelno01", "b/bogdabo01", #clippers players
                 "b/butleji01", "c/curryst01", "w/wiggian01", "g/greendr01", "p/podzibr01", #warriors players
                 "d/doncilu01", "r/reaveau01", "/j/jamesle01", "d/davisan02", "h/hachiru01", #lakers players
-                ) #top 5 players per team based on highest minutes per game average
+                "g/gilgesh01", "w/willija06", "d/dortlu01", "h/harteis01", "w/wallaca01", #thunder players
+                "j/jokicni01", "m/murraja01", "b/braunch01", "p/portemi01", "g/gordoaa01", #nuggets players
+                "c/camarto01", "s/simonan01", "g/grantje01", "s/sharpsh01", "a/aytonde01", #trailblazers players
+                "e/edwaran01", "r/randlju01", "g/goberru01", "m/mcdanja02", "r/reidna01", #timberwolves players
+                "g/georgke01", "m/markkla01", "c/collijo01", "k/kesslwa01", "s/sextoco01", #jazz players
+                "v/vanvlfr01", "g/greenja05", "t/thompam01", "b/brookdi01", "s/sengual01", #rockets players
+                "w/wembavi01", "v/vassede01", "p/paulch01", "b/barneha02", "c/castlst01", #spurs players
+                "b/banede01", "m/moranja01", "j/jacksja02", "w/wellsja01", "a/aldamsa01", #grizzlies players
+                "m/murphtr02", "i/ingrabr01", "m/mccolcj01", "m/murrade01", "j/joneshe01", #pelicans players
+                "i/irvinky01", "w/washipj01", "c/chrisma02", "m/marshna01", "t/thompkl01") #top 5 players per team based on highest minutes per game average
 ```
 
 
