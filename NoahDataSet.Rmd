@@ -1,5 +1,64 @@
 ---
 title: "NoahDataSet"
-output: html_document
+format:
+  pdf: default
+editor_options: 
+  chunk_output_type: console
 ---
+
+```{r}
+library(tidyverse)
+library(stringr)
+library(rvest)
+library(polite)
+library(sf)
+library(maps)
+library(viridis)
+library(leaflet)
+library(htmltools)
+```
+
+https://www.basketball-reference.com/leagues/NBA_2025_per_game.html
+
+scrape value: a
+
+```{r}
+robotstxt::paths_allowed("https://www.basketball-reference.com/leagues/NBA_2025_per_game.html")
+```
+
+```{r}
+pergame <- read_html("https://www.basketball-reference.com/teams/SAC/2025.html#all_roster")
+
+url_name <- html_nodes(pergame, ".left")
+url_name
+url_text <- html_text(url_name)
+url_text
+```
+
+
+```{r}
+player_url <- c("l/lavinza01", "f/foxde01", "d/derozde01", "s/sabondo01", "murrake02", #kings players
+                "b/bookede01", "d/duranke01", "b/bealbr01", "j/jonesty01", "o/onealro01", #suns players
+                "h/hardeja01", "l/leonaka01", "z/zubaciv01", "p/powelno01", "b/bogdabo01", #clippers players
+                "b/butleji01", "c/curryst01", "w/wiggian01", "g/greendr01", "p/podzibr01", #warriors players
+                "d/doncilu01", "r/reaveau01", "/j/jamesle01", "d/davisan02", "h/hachiru01", #lakers players
+                ) #top 5 players per team based on highest minutes per game average
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
