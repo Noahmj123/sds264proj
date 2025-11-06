@@ -26,8 +26,6 @@ for (i in seq_along(team_abbv)) {
 
 
 ```{r}
-
-
 basketball_tibble <- function(team, year) {
   url = str_c("https://www.basketball-reference.com/teams/", team, "/", year, "/gamelog/")
   session <- bow(url, force = T)
@@ -37,7 +35,7 @@ basketball_tibble <- function(team, year) {
 }
 basketball_tibble("CLE", 2025)
 
-hockey_data_temp <- map2(team_abbv, 2025, basketball_tibble)
-hockey_data_4yrs <- list_rbind(temp)
+basketball_data_temp <- map2(team_abbv, 2025, basketball_tibble)
+in_season_basketball <- list_rbind(basketball_data_temp)
 ```
 
