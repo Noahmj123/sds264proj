@@ -3,3 +3,39 @@ title: "MitchDataSet"
 output: html_document
 ---
 
+```{r}
+library(tidyverse)
+library(polite)
+library(rvest)
+```
+
+```{r}
+robotstxt::paths_allowed("https://en.wikipedia.org/wiki/Wikipedia:WikiProject_National_Basketball_Association/National_Basketball_Association_team_abbreviations")
+
+team_abbv_wiki <- read_html("https://en.wikipedia.org/wiki/Wikipedia:WikiProject_National_Basketball_Association/National_Basketball_Association_team_abbreviations")
+
+team_abbv_temp <- html_nodes(team_abbv_wiki, "td:nth-child(1)")
+
+team_abbv <- html_text(team_abbv_temp)
+
+for (i in seq_along(team_abbv)) {
+  team_abbv[i] <- str_replace(team_abbv[i], "^(.)(.)(.).*$", "\\1\\2\\3")
+  team_abbv[i] <- str_remove(team_abbv[i], "\n")
+}
+```
+
+
+```{r}
+basketball_tibble <- function(team, year) {
+  url = str_c("https://www.basketball-reference.com/teams/", team, "/", year, "/gamelog/")
+  session <- bow(url, force = T)
+  result <- scrape(session) |>
+    html_nodes(css = "table") |>
+    html_table(header = T, fill = T)
+}
+basketball_tibble("CLE", 2025)
+
+basketball_data_temp <- map2(team_abbv, 2025, basketball_tibble)
+in_season_basketball <- list_rbind(basketball_data_temp)
+```
+
