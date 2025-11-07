@@ -102,6 +102,25 @@ table2 <- html_table(tables2, header = TRUE, fill = TRUE)[[2]] |>
 }
 ```
 
+*Backing Up File*
+
 ```{r}
 write_csv(seasonstat, "~/sds264proj/seasonstat.csv")
 ```
+
+*Cleaning Our Data Set*
+
+```{r}
+season25 <- seasonstat |>
+  select(-Lg, -Awards, -Season) |>
+  clean_names() |>
+  filter(team != "2TM") |>
+  rename(position = pos, games_played = g, games_started = gs, minutes_played = mp, field_goals = fg, field_goal_attempts = fga, field_goal_percent = fg_percent, three_point_makes = x3p, three_point_attempts = x3pa, three_point_percent = x3p_percent, two_point_makes = x2p, two_point_attempts = x2pa, two_point_percent = x2p_percent, expected_field_goal_percent = e_fg_percent, free_throw_makes = ft, free_throw_attempts = fta, free_throw_percent = ft_percent, offensive_rebounds = orb, defensive_rebounds = drb, total_rebounds = trb, assists = ast, steals = stl, blocks = blk, turnovers = tov, personal_fouls = pf, points = pts)
+```
+
+*Saving Data Set*
+
+```{r}
+write_csv(season25, "~/sds264proj/season25.csv")
+```
+
