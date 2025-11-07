@@ -24,6 +24,8 @@ scrape value: a
 
 ```{r}
 robotstxt::paths_allowed("https://www.basketball-reference.com/leagues/NBA_2025_per_game.html")
+
+robotstxt::paths_allowed("https://www.basketball-reference.com/players/r/randlju01.html")
 ```
 
 ```{r}
@@ -51,7 +53,8 @@ player_url <- c("l/lavinza01", "f/foxde01", "d/derozde01", "s/sabondo01", "murra
                 "w/wembavi01", "v/vassede01", "p/paulch01", "b/barneha02", "c/castlst01", #spurs players
                 "b/banede01", "m/moranja01", "j/jacksja02", "w/wellsja01", "a/aldamsa01", #grizzlies players
                 "m/murphtr02", "i/ingrabr01", "m/mccolcj01", "m/murrade01", "j/joneshe01", #pelicans players
-                "i/irvinky01", "w/washipj01", "c/chrisma02", "m/marshna01", "t/thompkl01") #top 5 players per team based on highest minutes per game average
+                "i/irvinky01", "w/washipj01", "c/chrisma02", "m/marshna01", "t/thompkl01" #mavericks players
+                ) #top 5 players per team based on highest minutes per game average
 ```
 
 
