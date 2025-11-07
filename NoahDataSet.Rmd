@@ -113,8 +113,28 @@ seasonstat |>
 
 
 
+```{r}
+# function to scrape basketball data
+basketball_tibble <- function(team, year = 2025) {
+  url = ("https://www.basketball-reference.com/teams/CLE/2025.html#all_team_and_opponent")
+  robotstxt::paths_allowed("https://www.basketball-reference.com/teams/CLE/2025.html#all_team_and_opponent")
+  teamsite <- read_html(url)
+  team_opp_temp <- html_nodes(teamsite, "p")
+  tttt <- html_text(team_opp_temp)
+  tttt
+  # more code here that will clean up each tibble within the this
+}
+cavs <- basketball_tibble("CLE", 2025) # test function
+cavs
 
+# what will eventually create our combined tibble 
+basketball_data_temp <- map2(team_abbv, 2025, basketball_tibble)
+in_season_basketball <- list_rbind(basketball_data_temp)
+```
 
+```{r}
+
+```
 
 
 

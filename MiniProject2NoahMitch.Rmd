@@ -124,3 +124,39 @@ season25 <- seasonstat |>
 write_csv(season25, "~/sds264proj/season25.csv")
 ```
 
+*CSV Description*
+
+Note: All of these statistics and figures are relative to the 2025 NBA season
+
+age: Players age at start of 2025 season
+team: Accompanying team player was on for corresponding statistics
+position: Position labeled by team
+games_played: Number of games player entered a game
+games_started: Number of games a player was on the starting roster
+minutes_played: Average minutes played per game played
+field_goals: Average field goal makes per games played
+field_goal_attempts: Average field goal attempts per games played
+field_goal_percent: Average field goal percent per games played
+three_point_makes: Average three point makes per games played
+three_point_attempts: Average three point attempts per games played
+three_point_percent: Average three point percent per games played
+two_point_makes: Average two point makes per games played
+two_point_attempts: Average two point attempts per games played
+two_point_percent: Average two point percent per games played
+expected_field_goal_percent: Average expected field goal percent per games played
+free_throw_makes: Average free throw makes per games played
+free_throw_attempts: Average free throw attempts per games played
+free_throw_percent: Average free throw percent per games played
+offensive_rebounds: Average offensive rebounds per games played
+defensive_rebounds: Average defensive rebounds per games played
+total_rebounds: Average total rebounds per games played
+assists: Average assists per game played
+steals: Average steals per game played
+blocks: Average blocks per game played
+turnovers: Average turnovers per game played
+personal_fouls: Average personal fouls per game played
+points: Average points per game played
+player: Name of player
+
+
+
