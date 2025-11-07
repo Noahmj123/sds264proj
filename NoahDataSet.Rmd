@@ -16,36 +16,26 @@ library(maps)
 library(viridis)
 library(leaflet)
 library(htmltools)
+library(readr)
+library(janitor)
 ```
 
-https://www.basketball-reference.com/leagues/NBA_2025_per_game.html
-
-scrape value: a
 
 ```{r}
-robotstxt::paths_allowed("https://www.basketball-reference.com/leagues/NBA_2025_per_game.html")
-
 robotstxt::paths_allowed("https://www.basketball-reference.com/players/r/randlju01.html")
 ```
 
-```{r}
-pergame <- read_html("https://www.basketball-reference.com/teams/SAC/2025.html#all_roster")
 
-url_name <- html_nodes(pergame, ".left")
-url_name
-url_text <- html_text(url_name)
-url_text
-```
-
+Player URL Setup
 
 ```{r}
 #top 5 players per team based on highest minutes per game average
 
-player_url <- c("l/lavinza01", "f/foxde01", "d/derozde01", "s/sabondo01", "murrake02",  #kings players
+player_url <- c("l/lavinza01", "f/foxde01", "d/derozde01", "s/sabondo01", "m/murrake02",  #kings players
                 "b/bookede01", "d/duranke01", "b/bealbr01", "j/jonesty01", "o/onealro01", #suns players
                 "h/hardeja01", "l/leonaka01", "z/zubaciv01", "p/powelno01", "b/bogdabo01", #clippers players
                 "b/butleji01", "c/curryst01", "w/wiggian01", "g/greendr01", "p/podzibr01", #warriors players
-                "d/doncilu01", "r/reaveau01", "/j/jamesle01", "d/davisan02", "h/hachiru01", #lakers players
+                "d/doncilu01", "r/reaveau01", "j/jamesle01", "d/davisan02", "h/hachiru01", #lakers players
                 "g/gilgesh01", "w/willija06", "d/dortlu01", "h/harteis01", "w/wallaca01", #thunder players
                 "j/jokicni01", "m/murraja01", "b/braunch01", "p/portemi01", "g/gordoaa01", #nuggets players
                 "c/camarto01", "s/simonan01", "g/grantje01", "s/sharpsh01", "a/aytonde01", #trailblazers players
@@ -74,7 +64,47 @@ player_url <- c("l/lavinza01", "f/foxde01", "d/derozde01", "s/sabondo01", "murra
 ```
 
 
+Scrapping using table and webpage based data (html_text and html_table)
 
+```{r}
+seasonstat <- tibble() #fresh empty tibble that is ready to be added to
+
+for(i in 1:150) { #loop for 150 players in player_url
+  Sys.sleep(5) #Basketball reference has a limit on requests a minute so 5 seconds prevents from getting IP banned THIS TAKES AROUND 13 MINUTES
+  url <- str_c("https://www.basketball-reference.com/players/", player_url[i], ".html")
+  bow(url, force = TRUE) #announce and ask for permission to scrape
+  map <- read_html(url)
+  player_nodes <- html_nodes(map, "span")
+  player_names <- html_text(player_nodes) #html text containing player's name
+  last5_check <- html_nodes(map, "h2")
+  last5 <- html_text(last5_check) #html text containing if a player has a last 5 games table title
+  tables2 <- html_nodes(map, css = "table") 
+  if (last5[[1]] == "Last 5 Games") { #checks if player has last 5 games table
+  table2 <- html_table(tables2, header = TRUE, fill = TRUE)[[3]] |> #table of season averages
+  filter(Season == "2024-25") |>
+  mutate(Player = player_names[[9]]) #player's name is 9th in vector
+  seasonstat <- rbind(seasonstat, table2) #adds to out season stats table
+  } else { #players with no last 5 games table
+table2 <- html_table(tables2, header = TRUE, fill = TRUE)[[2]] |>
+  filter(Season == "2024-25") |>
+  mutate(Player = player_names[[9]])
+  seasonstat <- rbind(seasonstat, table2)
+  }
+}
+```
+
+```{r}
+write_csv(seasonstat, "~/sds264proj/seasonstat.csv")
+```
+
+Cleaning:
+
+```{r}
+seasonstat |>
+  select(-Lg, -Awards, -Season) |>
+  clean_names() |>
+  filter(team != "2TM")
+```
 
 
 
