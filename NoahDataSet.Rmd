@@ -39,6 +39,8 @@ url_text
 
 
 ```{r}
+#top 5 players per team based on highest minutes per game average
+
 player_url <- c("l/lavinza01", "f/foxde01", "d/derozde01", "s/sabondo01", "murrake02",  #kings players
                 "b/bookede01", "d/duranke01", "b/bealbr01", "j/jonesty01", "o/onealro01", #suns players
                 "h/hardeja01", "l/leonaka01", "z/zubaciv01", "p/powelno01", "b/bogdabo01", #clippers players
@@ -53,8 +55,22 @@ player_url <- c("l/lavinza01", "f/foxde01", "d/derozde01", "s/sabondo01", "murra
                 "w/wembavi01", "v/vassede01", "p/paulch01", "b/barneha02", "c/castlst01", #spurs players
                 "b/banede01", "m/moranja01", "j/jacksja02", "w/wellsja01", "a/aldamsa01", #grizzlies players
                 "m/murphtr02", "i/ingrabr01", "m/mccolcj01", "m/murrade01", "j/joneshe01", #pelicans players
-                "i/irvinky01", "w/washipj01", "c/chrisma02", "m/marshna01", "t/thompkl01" #mavericks players
-                ) #top 5 players per team based on highest minutes per game average
+                "i/irvinky01", "w/washipj01", "c/chrisma02", "m/marshna01", "t/thompkl01", #mavericks players
+                "m/maxeyty01", "o/oubreke01", "g/grimequ01", "g/georgpa01", "m/martica02", #76ers players
+                "h/hartjo01", "b/bridgmi01", "a/anunoog01", "b/brunsja01", "t/townska01", #knicks players
+                "b/barnesc01", "b/barrerj01", "p/poeltja01", "d/dickgr01", "q/quickim01", #raptors players
+                "t/tatumja01", "b/brownja02", "w/whitede01", "h/holidjr01", "p/porzikr01", #celtics players
+                "s/schrode01", "j/johnsca02", "t/thomaca02", "f/finnedo01", "t/timmedr01", #nets players
+                "w/whiteco01", "v/vucevni01", "d/dosunay01", "g/giddejo01", "h/huertke01", #bulls players
+                "c/cunnica01", "h/harrito02", "i/iveyja01", "h/hardati02", "b/beaslma01", #pistons players
+                "m/mitchdo01", "g/garlada01", "m/mobleev01", "a/allenja01", "s/strusma01", #cavaliers players
+                "l/lillada01", "k/kuzmaky01", "a/antetgi01", "l/lopezbr01", "p/princta02", #bucks players
+                "h/halibty01", "s/siakapa01", "t/turnemy01", "m/mathube01", "n/nembhan01", #pacers players
+                "h/herroty01", "a/adebaba01", "m/mitchda01", "r/roziete01", "j/jovicni01", #heat players
+                "y/youngtr01", "j/johnsja05", "d/daniedy01", "h/huntede01", "o/okongon01", #hawks players
+                "m/millebr02", "b/ballla01", "b/bridgmi02", "w/willigr01", "g/greenjo02", #hornets players
+                "b/banchpa01", "w/wagnefr01", "c/caldwke01", "s/suggsja01", "c/cartewe01", #magic players
+                "c/coulibi01", "c/carrica01", "p/poolejo01", "s/sarral01", "j/johnsaj01") #wizards players
 ```
 
 
