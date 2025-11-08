@@ -171,7 +171,7 @@ Wiki NBA team abbreviation page: https://en.wikipedia.org/wiki/Wikipedia:WikiPro
 robotstxt::paths_allowed("https://en.wikipedia.org/wiki/Wikipedia:WikiProject_National_Basketball_Association/National_Basketball_Association_team_abbreviations")
 ```
 
-To loop through each url of team data, we only need to change the three letter team abbreviation to determine which team's page we are accessing. Instead of manually entering this list, I took it upon myself to scrape the names from 
+To loop through each url of team data, we only need to change the three letter team abbreviation to determine which team's page we are accessing. Instead of manually entering this list, I took it upon myself to scrape the names from a list from wikipedia.
 
 ```{r}
 # scrape list of team abbreviations from wikipedia and clean up list of team abbreviations
@@ -223,23 +223,34 @@ team_stats <- list_rbind(team_stats_temp) # binds the tibbles together
 # cleaning up our tibble
 team_stats <- team_stats |>
   mutate(team_record = str_extract(team_record, "\\d\\d-\\d\\d"), # extracts the xx-xx numbers from the data
-         wins = parse_number(str_extract(team_record, "^\\d\\d")), # number of wins during the season 
-         losses = parse_number(str_extract(team_record, "\\d\\d$")), # number of losses
+         wins = parse_number(str_extract(team_record, "^\\d\\d")), # extracts the first set of digits  and turns it into number
+         losses = parse_number(str_extract(team_record, "\\d\\d$")), # extracts the last set of digits  and turns it into number
          points_per_g = str_remove_all(points_per_g, " "),
          points_per_g = str_remove_all(points_per_g, "\n"), # gets rid of enters and spaces
-         opp_points_per_g = str_extract(points_per_g, "OppPTS/G:\\d\\d\\d\\.\\d"),
-         points_per_g = parse_number(str_extract(points_per_g, "\\d\\d\\d\\.\\d")), # points per game scored by the team
-         opp_points_per_g = parse_number(str_extract(opp_points_per_g, "\\d\\d\\d\\.\\d")), # points per game scored by any given opponent team
+         opp_points_per_g = str_extract(points_per_g, "OppPTS/G:\\d\\d\\d\\.\\d"),# retrieves score after "OppPts/G"
+         points_per_g = parse_number(str_extract(points_per_g, "\\d\\d\\d\\.\\d")), # retrieves first score and turns it into number
+         opp_points_per_g = parse_number(str_extract(opp_points_per_g, "\\d\\d\\d\\.\\d")), # extracts the score part and turns it into number
          ratings = str_remove_all(ratings, " "),
          ratings = str_remove_all(ratings, "\n"), # gets rid of enters and spaces
-         off_rating = parse_number(str_extract(ratings, "\\d\\d\\d\\.\\d")), # offensive rating
-         def_rating = str_extract(ratings, "DefRtg:\\d\\d\\d\\.\\d"),
-         def_rating = parse_number(str_remove(def_rating, "DefRtg:")), # defensive rating
-         net_rating = off_rating - def_rating) |> # offensive rating - defensive rating
-  select(-team_record, -ratings) # getting rid of placeholder variables
+         off_rating = parse_number(str_extract(ratings, "\\d\\d\\d\\.\\d")), # retrieves first rating  and turns it into number
+         def_rating = str_extract(ratings, "DefRtg:\\d\\d\\d\\.\\d"), # retrieves rating after "DefRtg:"
+         def_rating = parse_number(str_remove(def_rating, "DefRtg:")), # removes "DefRtg" part and turns it into number
+         net_rating = off_rating - def_rating) |> # defines net_rating
+  select(team, wins, losses, points_per_g, opp_points_per_g, off_rating, def_rating, ) # specifies our final tibble's variables
 ```
 
 ```{r}
 # saving data set as csv
 write_csv(team_stats, "~/sds264proj/team_stats.csv")
 ```
+
+*CSV Description*
+
+team - the three-letter abbreviation of the team associated to the stats on a given row
+wins - total number of wins during the in-season
+losses - total number of losses during the in-season
+points_per_g - the average amount of points scored per game for a given team
+opp_points_per_g - the average the average amount of points scored per game for the any particular opponent of a given team
+off_rating - offensive rating, measures points scored per 100 possessions
+def_rating - defensive rating, measures points allowed per 100 possessions
+net_rating - off_rating minus def_rating
