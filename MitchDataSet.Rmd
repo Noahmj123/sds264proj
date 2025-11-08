@@ -7,6 +7,7 @@ output: html_document
 library(tidyverse)
 library(polite)
 library(rvest)
+library(stringr)
 ```
 
 ```{r}
@@ -25,24 +26,59 @@ for (i in seq_along(team_abbv)) {
   team_abbv[i] <- str_remove(team_abbv[i], "\n")
 }
 
+team_abbv[3] = "BRK"
+team_abbv[4] = "CHO"
+team_abbv[24] = "PHO"
 team_abbv
 ```
 
-
 ```{r}
 # function to scrape basketball data
+get_text_from_page <- function(page, css_selector) {
+  page |> 
+    html_nodes(css_selector) |> 
+    html_text()
+}
+
+# function to turn basketball data into a tibble
 basketball_tibble <- function(team, year = 2025) {
   url = str_c("https://www.basketball-reference.com/teams/", team, "/", year, ".html")
-  robotstxt::paths_allowed(url)
-  teamsite <- read_html(url)
-  team_opp_temp <- html_nodes(teamsite, "#team_and_opponent .center , #team_and_opponent .left", css = "table")
-  # more code here that will clean up each tibble within the this
+  session <- bow(url, force = T)
+  page <- scrape(session)
+  team_record <- get_text_from_page(page, ".prevnext+ p")
+  points_per_g <- get_text_from_page(page, "p:nth-child(6)")
+  ratings <- get_text_from_page(page, "p:nth-child(8)")
+  tibble(team = team, team_record = team_record, points_per_g = points_per_g, ratings = ratings)
 }
 cavs <- basketball_tibble("CLE", 2025) # test function
 cavs
 
-# what will eventually create our combined tibble 
-basketball_data_temp <- map2(team_abbv, 2025, basketball_tibble)
-in_season_basketball <- list_rbind(basketball_data_temp)
+team_stats_temp <- map2(team_abbv, 2025, basketball_tibble)
+team_stats <- list_rbind(team_stats_temp)
 ```
 
+
+```{r}
+# cleaning up our tibble
+team_stats <- team_stats |>
+  mutate(team_record = str_extract(team_record, "\\d\\d-\\d\\d"), # team record which will later be separated into wins and losses
+         wins = parse_number(str_extract(team_record, "^\\d\\d")), # number of wins 
+         losses = parse_number(str_extract(team_record, "\\d\\d$")),
+         points_per_g = str_remove_all(points_per_g, " "),
+         points_per_g = str_remove_all(points_per_g, "\n"),
+         opp_points_per_g = str_extract(points_per_g, "OppPTS/G:\\d\\d\\d\\.\\d"),
+         points_per_g = parse_number(str_extract(points_per_g, "\\d\\d\\d\\.\\d")),
+         opp_points_per_g = parse_number(str_extract(opp_points_per_g, "\\d\\d\\d\\.\\d")),
+         ratings = str_remove_all(ratings, " "),
+         ratings = str_remove_all(ratings, "\n"),
+         off_rating = parse_number(str_extract(ratings, "\\d\\d\\d\\.\\d")),
+         def_rating = str_extract(ratings, "DefRtg:\\d\\d\\d\\.\\d"),
+         def_rating = parse_number(str_remove(def_rating, "DefRtg:")),
+         net_rating = off_rating - def_rating) |>
+  select(-team_record, -ratings)
+```
+
+```{r}
+# saving data set as csv
+write_csv(team_stats, "~/sds264proj/team_stats.csv")
+```
