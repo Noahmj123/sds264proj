@@ -79,6 +79,8 @@ player_url <- c("l/lavinza01", "f/foxde01", "d/derozde01", "s/sabondo01", "m/mur
 *Scrapping using table and webpage based data (html_text and html_table)*
 
 ```{r}
+#| eval: FALSE
+
 seasonstat <- tibble() #fresh empty tibble that is ready to be added to
 
 for(i in 1:150) { #loop for 150 players in player_url
@@ -108,12 +110,14 @@ table2 <- html_table(tables2, header = TRUE, fill = TRUE)[[2]] |>
 *Backing Up File*
 
 ```{r}
+#| eval: FALSE
 write_csv(seasonstat, "~/sds264proj/seasonstat.csv")
 ```
 
 *Cleaning Our Data Set*
 
 ```{r}
+#| eval: FALSE
 season25 <- seasonstat |>
   select(-Lg, -Awards, -Season) |>
   clean_names() |>
@@ -124,6 +128,7 @@ season25 <- seasonstat |>
 *Saving Data Set*
 
 ```{r}
+#| eval: FALSE
 write_csv(season25, "~/sds264proj/season25.csv")
 ```
 
@@ -161,7 +166,7 @@ personal_fouls: Average personal fouls per game played
 points: Average points per game played
 player: Name of player
 
-**Mitch's Part**
+*Team Data*
 
 Wiki NBA team abbreviation page: https://en.wikipedia.org/wiki/Wikipedia:WikiProject_National_Basketball_Association/National_Basketball_Association_team_abbreviations
 
@@ -197,6 +202,7 @@ team_abbv
 ```
 
 ```{r}
+#| eval: FALSE
 # function to scrape basketball data
 get_text_from_page <- function(page, css_selector) {
   page |> 
@@ -220,6 +226,7 @@ team_stats <- list_rbind(team_stats_temp) # binds the tibbles together
 ```
 
 ```{r}
+#| eval: FALSE
 # cleaning up our tibble
 team_stats <- team_stats |>
   mutate(team_record = str_extract(team_record, "\\d\\d-\\d\\d"), # extracts the xx-xx numbers from the data
@@ -240,6 +247,7 @@ team_stats <- team_stats |>
 ```
 
 ```{r}
+#| eval: FALSE
 # saving data set as csv
 write_csv(team_stats, "~/sds264proj/team_stats.csv")
 ```
