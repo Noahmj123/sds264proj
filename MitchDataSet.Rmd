@@ -11,21 +11,27 @@ library(stringr)
 ```
 
 ```{r}
-# code to scrape from wikipedia and clean up list of team abbreviations
-robotstxt::paths_allowed("https://en.wikipedia.org/wiki/Wikipedia:WikiProject_National_Basketball_Association/National_Basketball_Association_team_abbreviations")
 
+robotstxt::paths_allowed("https://en.wikipedia.org/wiki/Wikipedia:WikiProject_National_Basketball_Association/National_Basketball_Association_team_abbreviations")
+```
+
+```{r}
+# scrape list of team abbreviations from wikipedia and clean up list of team abbreviations
 team_abbv_wiki <- read_html("https://en.wikipedia.org/wiki/Wikipedia:WikiProject_National_Basketball_Association/National_Basketball_Association_team_abbreviations")
 
 team_abbv_temp <- html_nodes(team_abbv_wiki, "td:nth-child(1)")
 
 team_abbv <- html_text(team_abbv_temp)
+```
 
-# cleaning up data
+```{r}
+# cleaning up abbreviation data
 for (i in seq_along(team_abbv)) {
   team_abbv[i] <- str_replace(team_abbv[i], "^(.)(.)(.).*$", "\\1\\2\\3")
   team_abbv[i] <- str_remove(team_abbv[i], "\n")
 }
 
+# accounting for errors made by wikipedia site
 team_abbv[3] = "BRK"
 team_abbv[4] = "CHO"
 team_abbv[24] = "PHO"
@@ -50,32 +56,29 @@ basketball_tibble <- function(team, year = 2025) {
   ratings <- get_text_from_page(page, "p:nth-child(8)")
   tibble(team = team, team_record = team_record, points_per_g = points_per_g, ratings = ratings)
 }
-cavs <- basketball_tibble("CLE", 2025) # test function
-cavs
 
-team_stats_temp <- map2(team_abbv, 2025, basketball_tibble)
-team_stats <- list_rbind(team_stats_temp)
+team_stats_temp <- map2(team_abbv, 2025, basketball_tibble) # creates a list of one-row tibbles for each team
+team_stats <- list_rbind(team_stats_temp) # binds the tibbles together
 ```
-
 
 ```{r}
 # cleaning up our tibble
 team_stats <- team_stats |>
-  mutate(team_record = str_extract(team_record, "\\d\\d-\\d\\d"), # team record which will later be separated into wins and losses
-         wins = parse_number(str_extract(team_record, "^\\d\\d")), # number of wins 
-         losses = parse_number(str_extract(team_record, "\\d\\d$")),
+  mutate(team_record = str_extract(team_record, "\\d\\d-\\d\\d"), # extracts the xx-xx numbers from the data
+         wins = parse_number(str_extract(team_record, "^\\d\\d")), # number of wins during the season 
+         losses = parse_number(str_extract(team_record, "\\d\\d$")), # number of losses
          points_per_g = str_remove_all(points_per_g, " "),
-         points_per_g = str_remove_all(points_per_g, "\n"),
+         points_per_g = str_remove_all(points_per_g, "\n"), # gets rid of enters and spaces
          opp_points_per_g = str_extract(points_per_g, "OppPTS/G:\\d\\d\\d\\.\\d"),
-         points_per_g = parse_number(str_extract(points_per_g, "\\d\\d\\d\\.\\d")),
-         opp_points_per_g = parse_number(str_extract(opp_points_per_g, "\\d\\d\\d\\.\\d")),
+         points_per_g = parse_number(str_extract(points_per_g, "\\d\\d\\d\\.\\d")), # points per game scored by the team
+         opp_points_per_g = parse_number(str_extract(opp_points_per_g, "\\d\\d\\d\\.\\d")), # points per game scored by any given opponent team
          ratings = str_remove_all(ratings, " "),
-         ratings = str_remove_all(ratings, "\n"),
-         off_rating = parse_number(str_extract(ratings, "\\d\\d\\d\\.\\d")),
+         ratings = str_remove_all(ratings, "\n"), # gets rid of enters and spaces
+         off_rating = parse_number(str_extract(ratings, "\\d\\d\\d\\.\\d")), # offensive rating
          def_rating = str_extract(ratings, "DefRtg:\\d\\d\\d\\.\\d"),
-         def_rating = parse_number(str_remove(def_rating, "DefRtg:")),
-         net_rating = off_rating - def_rating) |>
-  select(-team_record, -ratings)
+         def_rating = parse_number(str_remove(def_rating, "DefRtg:")), # defensive rating
+         net_rating = off_rating - def_rating) |> # offensive rating - defensive rating
+  select(-team_record, -ratings) # getting rid of placeholder variables
 ```
 
 ```{r}
