@@ -1,0 +1,24 @@
+---
+title: "shotdata"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(hoopR)
+library(worldfootballR)
+library(sportyR)
+library(tictoc)
+library(ggplot2)
+library(janitor)
+```
+
+
+```{r}
+tictoc::tic()
+progressr::with_progress({
+  nba_pbp <- hoopR::load_nba_pbp(seasons = 2025)
+})
+tictoc::toc()
+```
+
