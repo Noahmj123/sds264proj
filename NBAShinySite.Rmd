@@ -135,7 +135,7 @@ This will show a scatterplot with each player/team comparing offensive efficienc
 
 ```{r, echo=FALSE}
 inputPanel(
-  selectInput("x_axis", label = "X-axis variable",
+  selectInput("x_axis", label = "X-axis variable:",
               choices = c("TBD", "Not sure yet.."), selected = "TBD")
 )
 ```
