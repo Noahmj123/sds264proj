@@ -11,6 +11,7 @@ library(sportyR)
 library(tictoc)
 library(ggplot2)
 library(janitor)
+library(stringr)
 ```
 
 
@@ -21,4 +22,30 @@ progressr::with_progress({
 })
 tictoc::toc()
 ```
+
+```{r}
+shot_map <- nba_pbp |>
+  filter(shooting_play == "TRUE") |>
+  rename(result = scoring_play) |>
+  filter(!str_detect(text, "blocks")) |>
+  mutate(result = ifelse(result == TRUE, "make", "miss"), player_n = str_extract(text, "^[^ ]+ [^ ]+(?: Jr\\.)?")) |>
+  select(player_n, coordinate_x, coordinate_y, result) |>
+  filter(player_n %in% season25$player)
+```
+
+```{r}
+library(readr)
+season25 <- read_csv("season25.csv")
+View(season25)
+```
+
+
+
+
+
+
+
+
+
+
 
