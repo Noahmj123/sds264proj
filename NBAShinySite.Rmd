@@ -131,6 +131,8 @@ This will show a scatterplot with each player/team comparing offensive efficienc
 
 # Rank to Record
 
+## Inputs {.sidebar}
+
 ```{r, echo=FALSE}
 inputPanel(
   selectInput("x_axis", label = "X-axis variable",
