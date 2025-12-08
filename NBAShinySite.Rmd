@@ -2,7 +2,9 @@
 title: "NBA Player Data"
 output:
   flexdashboard::flex_dashboard:
-    theme: slate
+    theme:
+      version: 4
+      bootswatch: slate
 runtime: shiny
 ---
 
