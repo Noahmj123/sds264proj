@@ -71,7 +71,7 @@ renderPlot({
 })
 ```
 
-# Tidyverse
+# 
 
 ## Inputs {.sidebar}
 
@@ -111,3 +111,30 @@ ggplot(faithful, aes(x = eruptions)) +
   labs(x = "Duration (minutes)", 
        title = "Geyser eruption duration")
 ```
+
+# Efficiency
+
+## Inputs {.sidebar}
+
+```{r, echo=FALSE}
+inputPanel(
+  selectInput("group_choice", label = "Analyze by:",
+              choices = c("Player", "Team"), selected = "Player")
+)
+```
+
+## Column
+
+### Offensive Efficiency vs. Defensive Efficiency
+
+This will show a scatterplot with each player/team comparing offensive efficiency to defensive efficiency.
+
+# Rank to Record
+
+```{r, echo=FALSE}
+inputPanel(
+  selectInput("x_axis", label = "X-axis variable",
+              choices = c("TBD", "Not sure yet.."), selected = "TBD")
+)
+```
+
