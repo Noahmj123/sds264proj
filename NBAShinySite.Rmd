@@ -1,6 +1,10 @@
 ---
 title: "NBA Player Data"
-output: flexdashboard::flex_dashboard
+output:
+  flexdashboard::flex_dashboard:
+    theme:
+      version: 4
+      bootswatch: cyborg
 runtime: shiny
 ---
 
@@ -9,11 +13,9 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-About
-==========================
+# About
 
-Column {data-width = 200}
--------------------------
+## Column {data-width = 200}
 
 **Authors**
 
@@ -29,8 +31,7 @@ Player and team data was collected from [Basketball Reference](https://www.baske
 
 How did we do it? Check it out [here](https://github.com/Noahmj123/sds264proj).
 
-Column {data-width = 200}
--------------------------
+## Column {data-width = 200}
 
 ```{r, echo=FALSE}
 
@@ -40,12 +41,9 @@ renderImage({
   })
 ```
 
+# Shot Distance
 
-Shot Distance
-==========================
-
-Inputs {.sidebar}
--------------------------
+## Inputs {.sidebar}
 
 ```{r, echo=FALSE}
 inputPanel(
@@ -57,8 +55,7 @@ inputPanel(
 )
 ```
 
-Column 
--------------------------
+## Column
 
 ### Geyser Eruption Duration
 
@@ -74,12 +71,9 @@ renderPlot({
 })
 ```
 
+# 
 
-Tidyverse
-==========================
-
-Inputs {.sidebar}
--------------------------
+## Inputs {.sidebar}
 
 ```{r, echo=FALSE}
 inputPanel(
@@ -91,8 +85,7 @@ inputPanel(
 )
 ```
 
-Column 
--------------------------
+## Column
 
 ### Geyser Eruption Duration
 
@@ -108,8 +101,6 @@ renderPlot({
 })
 ```
 
-
-
 ```{r, eval = FALSE, include = FALSE}
 # First write code that works, then incorporate into renderPlot
 ggplot(faithful, aes(x = eruptions)) +
@@ -120,3 +111,32 @@ ggplot(faithful, aes(x = eruptions)) +
   labs(x = "Duration (minutes)", 
        title = "Geyser eruption duration")
 ```
+
+# Efficiency
+
+## Inputs {.sidebar}
+
+```{r, echo=FALSE}
+inputPanel(
+  selectInput("group_choice", label = "Analyze by:",
+              choices = c("Player", "Team"), selected = "Player")
+)
+```
+
+## Column
+
+### Offensive Efficiency vs. Defensive Efficiency
+
+This will show a scatterplot with each player/team comparing offensive efficiency to defensive efficiency.
+
+# Rank to Record
+
+## Inputs {.sidebar}
+
+```{r, echo=FALSE}
+inputPanel(
+  selectInput("x_axis", label = "X-axis variable:",
+              choices = c("TBD", "Not sure yet.."), selected = "TBD")
+)
+```
+
