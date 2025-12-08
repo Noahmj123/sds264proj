@@ -1,6 +1,9 @@
 ---
 title: "NBA Player Data"
-output: flexdashboard::flex_dashboard
+output:
+  flexdashboard::flex_dashboard
+    theme: 
+
 runtime: shiny
 ---
 
