@@ -30,7 +30,8 @@ shot_map <- nba_pbp |>
   filter(!str_detect(text, "blocks")) |>
   mutate(result = ifelse(result == TRUE, "make", "miss"), player_n = str_extract(text, "^[^ ]+ [^ ]+(?: Jr\\.)?")) |>
   select(player_n, coordinate_x, coordinate_y, result) |>
-  filter(player_n %in% season25$player)
+  filter(player_n %in% season25$player) |>
+  mutate(coordinate_x = abs(coordinate_x))
 ```
 
 ```{r}
@@ -38,14 +39,30 @@ library(readr)
 season25 <- read_csv("season25.csv")
 View(season25)
 ```
+Origin at (41.75, 0)
+
+```{r}
+gob <- shot_map |>
+  filter(player_n == "Rudy Gobert", coordinate_y == 0, coordinate_x == 42.75)
+
+geom_basketball(league = "NBA", display_range = "full") +
+geom_point(data = gob, aes(x = coordinate_x, y = coordinate_y, color = result)) +
+  scale_colour_manual(values = c("green", "red"))
+```
 
 
+41.75 hoop
+28 free throw line
 
+15ft 
 
+13.75
 
+1.09 ft/unit
 
-
-
-
-
+```{r}
+shot_map <- shot_map |>
+  mutate(x_ft = abs((41.75-coordinate_x)*(15/13.75)), y_ft = abs(coordinate_y)*(15/13.75)) |>
+  mutate(shot_dist_ft = sqrt(x_ft^2 + y_ft^2))
+```
 
