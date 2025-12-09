@@ -71,6 +71,12 @@ shot_map <- nba_pbp |>
 shot_map <- shot_map |>
   mutate(x_ft = abs((41.75-coordinate_x)*(15/13.75)), y_ft = abs(coordinate_y)*(15/13.75)) |>
   mutate(shot_dist_ft = sqrt(x_ft^2 + y_ft^2))
+
+players <- shot_map |>
+  group_by(player_n) |>
+  summarize(n = n()) |>
+  select(player_n) |>
+  mutate(last = str_remove(player_n, "^.* "))
 ```
 
 ## Column
@@ -79,15 +85,17 @@ shot_map <- shot_map |>
 
 ```{r echo = FALSE}
 inputPanel(
-  selectInput("distg", label = "Number of Players",
-              choices = c(50,100,150), selected = 50)
+  selectInput("distg", label = "Sort By:",
+              choices = c("High to Low", "Low to High", "A-Z", "Z-A"), selected = "High to Low")
 )
 
 renderTable({
   mean_shot |>
     arrange(-mean_shot_ft) |>
-    rename(Player = player_n, "Average Shot(ft)" = mean_shot_ft) |>
-    slice_head(n = as.numeric(input$distg))
+    if (input$distg == "Low to High") {
+      arrange(mean_shot_ft)
+    } else
+    rename(Player = player_n, "Average Shot(ft)" = mean_shot_ft)
 })
 ```
 
@@ -98,7 +106,7 @@ renderTable({
 ```{r echo = FALSE}
 inputPanel(
   selectInput("playr", label = "Player",
-              choices = season25$player)
+              choices = players$player_n)
 )
 
 renderPlot({
