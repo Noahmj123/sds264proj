@@ -77,6 +77,9 @@ players <- shot_map |>
   summarize(n = n()) |>
   select(player_n) |>
   mutate(last = str_remove(player_n, "^.* "))
+
+mean_shot <- mean_shot |>
+  mutate(last = str_remove(player_n, "^.* "))
 ```
 
 ## Column
@@ -90,12 +93,26 @@ inputPanel(
 )
 
 renderTable({
+ if(input$distg == "High to Low")
   mean_shot |>
     arrange(-mean_shot_ft) |>
-    if (input$distg == "Low to High") {
-      arrange(mean_shot_ft)
-    } else
-    rename(Player = player_n, "Average Shot(ft)" = mean_shot_ft)
+    rename(Player = player_n, "Average Shot(ft)" = mean_shot_ft) |>
+    select(-last)
+  else if(input$distg == "Low to High")
+  mean_shot |>
+    arrange(mean_shot_ft) |>
+    rename(Player = player_n, "Average Shot(ft)" = mean_shot_ft) |>
+    select(-last)
+  else if(input$distg == "A-Z")
+  mean_shot |>
+    arrange(last) |>
+    rename(Player = player_n, "Average Shot(ft)" = mean_shot_ft) |>
+    select(-last)
+  else if(input$distg == "Z-A")
+  mean_shot |>
+    arrange(desc(last)) |>
+    rename(Player = player_n, "Average Shot(ft)" = mean_shot_ft) |>
+    select(-last)
 })
 ```
 
