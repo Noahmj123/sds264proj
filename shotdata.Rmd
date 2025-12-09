@@ -30,7 +30,7 @@ shot_map <- nba_pbp |>
   filter(!str_detect(text, "blocks")) |>
   mutate(result = ifelse(result == TRUE, "make", "miss"), player_n = str_extract(text, "^[^ ]+ [^ ]+(?: Jr\\.)?")) |>
   select(player_n, coordinate_x, coordinate_y, result) |>
-  filter(player_n %in% season25$player) |>
+  filter(player_n %in% season25$player | player_n %in% c("Bogdan Bogdanovic", "Luka Doncic", "Nikola Jokic", "Alperen Sengun", "Dennis Schroder", "Nikola Vucevic", "Nikola Jović")) |>
   mutate(coordinate_x = abs(coordinate_x))
 ```
 
@@ -64,5 +64,17 @@ geom_point(data = gob, aes(x = coordinate_x, y = coordinate_y, color = result)) 
 shot_map <- shot_map |>
   mutate(x_ft = abs((41.75-coordinate_x)*(15/13.75)), y_ft = abs(coordinate_y)*(15/13.75)) |>
   mutate(shot_dist_ft = sqrt(x_ft^2 + y_ft^2))
+```
+
+```{r}
+mean_shot <- shot_map |>
+  group_by(player_n) |>
+  summarize(mean_shot_ft = mean(shot_dist_ft)) |>
+  ungroup() |>
+  arrange(mean_shot_ft)
+```
+
+```{r}
+write_csv(mean_shot, "mean_shot.csv")
 ```
 
