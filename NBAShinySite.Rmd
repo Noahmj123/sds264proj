@@ -87,19 +87,19 @@ inputPanel(
 
 ## Column
 
-### Geyser Eruption Duration
+### Player Average Shot Distance (ft)
 
 ```{r echo = FALSE}
 inputPanel(
-  selectInput("distg", label = "Players",
-              choices = c("Top 50" = "1:50", "Middle 47" = "51:100", "Bottom 50" = "101:147"), selected = "Top 50")
+  selectInput("distg", label = "Number of Players",
+              choices = c(50,100,150), selected = 50)
 )
 
 renderTable({
   mean_shot |>
     arrange(-mean_shot_ft) |>
     rename(Player = player_n, "Average Shot(ft)" = mean_shot_ft) |>
-    slice(input$distg)
+    slice_head(n = as.numeric(input$distg))
 })
 ```
 
