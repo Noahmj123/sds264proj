@@ -18,8 +18,10 @@ library(ggplot2)
 library(janitor)
 library(stringr)
 library(readr)
+library(plotly)
 mean_shot <- read_csv("mean_shot.csv")
 season25 <- read_csv("season25.csv")
+team_stats <- read_csv("team_stats.csv")
 ```
 
 # About
@@ -145,33 +147,43 @@ geom_point(data = playd, aes(x = coordinate_y, y = -coordinate_x, color = result
 })
 ```
 
-```{r, eval = FALSE, include = FALSE}
-# First write code that works, then incorporate into renderPlot
-ggplot(faithful, aes(x = eruptions)) +
-  geom_histogram(aes(y = ..density..), 
-                 bins = 15,
-                 fill = "white", colour = "black") +
-  geom_density(adjust = 1.2, colour = "blue") +
-  labs(x = "Duration (minutes)", 
-       title = "Geyser eruption duration")
-```
-
-# Efficiency
+# Teams
 
 ## Inputs {.sidebar}
 
 ```{r, echo=FALSE}
 inputPanel(
   selectInput("group_choice", label = "Analyze by:",
-              choices = c("Player", "Team"), selected = "Player")
+              choices = c("Points", "Rating"), selected = "Rating")
 )
 ```
 
 ## Column
 
-### Offensive Efficiency vs. Defensive Efficiency
 
-This will show a scatterplot with each player/team comparing offensive efficiency to defensive efficiency.
+
+### Team Ratings and Points
+
+```{r echo = FALSE}
+df_line <- data.frame(
+      x_line = 1:200,
+      y_line = 1:200
+    )
+
+renderPlotly({
+  if(input$group_choice == "Points")
+team_stats |>
+plot_ly(x = ~points_per_g, y = ~opp_points_per_g, type = 'scatter', mode = 'markers', text = ~paste("Team: ", team, '<br>Win%: ', round(wins/82, digits = 3))) |>
+      layout(xaxis = list(title = "Team Points Per Game"),
+             yaxis = list(title = "Team Points Allowed Per Game"))
+  else if(input$group_choice == "Rating")
+team_stats |>
+plot_ly(x = ~off_rating, y = ~-def_rating, type = 'scatter', mode = 'markers', text = ~paste("Team: ", team, '<br>Win%: ', round(wins/82, digits = 3))) |>
+      layout(xaxis = list(title = "Team Offensive Rating"),
+             yaxis = list(title = "Team Defensive Rating (Inverse)"))
+      
+})
+```
 
 # Rank to Record
 
