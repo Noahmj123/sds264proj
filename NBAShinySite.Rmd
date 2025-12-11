@@ -2,7 +2,6 @@
 title: "NBA Player Data"
 output:
   flexdashboard::flex_dashboard:
-    #vertical_layout: scroll
     theme:
       version: 4
       bootswatch: cyborg
