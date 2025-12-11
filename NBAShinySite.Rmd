@@ -67,7 +67,7 @@ shot_map <- nba_pbp |>
   filter(!str_detect(text, "blocks")) |>
   mutate(result = ifelse(result == TRUE, "make", "miss"), player_n = str_extract(text, "^[^ ]+ [^ ]+(?: Jr\\.)?")) |>
   select(player_n, coordinate_x, coordinate_y, result) |>
-  filter(player_n %in% season25$player | player_n %in% c("Bogdan Bogdanovic", "Luka Doncic", "Nikola Jokic", "Alperen Sengun", "Dennis Schroder", "Nikola Vucevic", "Nikola Jović")) |>
+  filter(player_n %in% season25$player | player_n %in% c("Bogdan Bogdanovic", "Luka Doncic", "Nikola Jokic", "Alperen Sengun", "Dennis Schroder", "Nikola Vucevic", "Nikola Jovic", "Kristaps Porzingis")) |>
   mutate(coordinate_x = abs(coordinate_x)) |>
     filter(coordinate_x != 28 & coordinate_y != 0)
 
@@ -144,6 +144,52 @@ geom_point(data = playd, aes(x = coordinate_y, y = -coordinate_x, color = result
                              b = 40,
                              l = 10)) +
   theme_void()#gets rid of axis and lines
+
+})
+```
+
+# Test
+
+```{r echo = FALSE}
+inputPanel(
+  selectInput("playr2", label = "Player",
+              choices = players$player_n)
+)
+
+renderPlot({
+
+hline <- list(
+  type = "line",
+  x0 = 0,
+  x1 = 1,
+  xref = "paper",
+  y0 = 15, 
+  y1 = 15, 
+  yref = "y",
+  line = list(color = "red", dash = "dash", width = 2)
+)
+
+
+meanseason25 <- season25 |> 
+mutate(player = case_when(
+    player == "Bogdan Bogdanović" ~ "Bogdan Bogdanovic",
+    player == "Luka Dončić" ~ "Luka Doncic",
+    player == "Nikola Jokić" ~ "Nikola Jokic",
+    player == "Alperen Şengün" ~ "Alperen Sengun",
+    player == "Dennis Schröder" ~ "Dennis Schroder",
+    player == "Nikola Vučević" ~ "Nikola Vucevic",
+    player == "Nikola Jović" ~ "Nikola Jovic",
+    player == "Kristaps Porziņģis" ~ "Kristaps Porzingis",
+    TRUE ~ player)) |>
+    left_join(mean_shot, by = join_by(player == player_n))
+
+playerpoint <-  meanseason25 |>
+  filter(player == input$playr2)
+
+meanseason25|>
+plot_ly(x = ~free_throw_percent, y = ~mean_shot_ft, type = 'scatter', mode = 'markers', text = ~paste("Player: ", player, '<br>Team: ', team)) |>
+      layout(xaxis = list(title = "Free Throw Percentage"),
+             yaxis = list(title = "Average Shot Distance (ft)"))
 })
 ```
 
