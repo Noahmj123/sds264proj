@@ -2,6 +2,7 @@
 title: "NBA Player Data"
 output:
   flexdashboard::flex_dashboard:
+    vertical_layout: scroll
     theme:
       version: 4
       bootswatch: cyborg
@@ -11,7 +12,6 @@ runtime: shiny
 ```{r global, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
-library(hoopR)
 library(sportyR)
 library(tictoc)
 library(ggplot2)
@@ -22,6 +22,7 @@ library(plotly)
 mean_shot <- read_csv("mean_shot.csv")
 season25 <- read_csv("season25.csv")
 team_stats <- read_csv("team_stats.csv")
+shot_map <- read_csv("shot_map.csv")
 ```
 
 # About
@@ -55,26 +56,6 @@ renderImage({
 # Shot Distance
 
 ```{r, include = FALSE}
-tictoc::tic()
-progressr::with_progress({
-  nba_pbp <- hoopR::load_nba_pbp(seasons = 2025)
-})
-tictoc::toc()
-
-shot_map <- nba_pbp |>
-  filter(shooting_play == "TRUE") |>
-  rename(result = scoring_play) |>
-  filter(!str_detect(text, "blocks")) |>
-  mutate(result = ifelse(result == TRUE, "make", "miss"), player_n = str_extract(text, "^[^ ]+ [^ ]+(?: Jr\\.)?")) |>
-  select(player_n, coordinate_x, coordinate_y, result) |>
-  filter(player_n %in% season25$player | player_n %in% c("Bogdan Bogdanovic", "Luka Doncic", "Nikola Jokic", "Alperen Sengun", "Dennis Schroder", "Nikola Vucevic", "Nikola Jovic", "Kristaps Porzingis")) |>
-  mutate(coordinate_x = abs(coordinate_x)) |>
-    filter(coordinate_x != 28 & coordinate_y != 0)
-
-shot_map <- shot_map |>
-  mutate(x_ft = abs((41.75-coordinate_x)*(15/13.75)), y_ft = abs(coordinate_y)*(15/13.75)) |>
-  mutate(shot_dist_ft = sqrt(x_ft^2 + y_ft^2))
-
 players <- shot_map |>
   group_by(player_n) |>
   summarize(n = n()) |>
@@ -95,6 +76,9 @@ inputPanel(
               choices = c("High to Low", "Low to High", "A-Z", "Z-A"), selected = "High to Low")
 )
 
+```
+
+```{r echo = FALSE}
 renderTable({
  if(input$distg == "High to Low")
   mean_shot |>
@@ -119,7 +103,8 @@ renderTable({
 })
 ```
 
-## Column
+Column {data-width=500, data-height=300}
+-------------------------------------
 
 ### Player Shot Chart
 
@@ -129,10 +114,14 @@ inputPanel(
               choices = players$player_n)
 )
 
+```
+
+```{r echo = FALSE}
+
 renderPlot({
   playd <-shot_map |>
     filter(player_n == input$playr)
-  
+
 geom_basketball(league = "NBA", display_range = "offense", rotation = 270) +
 geom_point(data = playd, aes(x = coordinate_y, y = -coordinate_x, color = result), show.legend = FALSE) +
   scale_colour_manual(values = c("green", "red")) +
@@ -146,29 +135,13 @@ geom_point(data = playd, aes(x = coordinate_y, y = -coordinate_x, color = result
   theme_void()#gets rid of axis and lines
 
 })
+
+
 ```
 
-# Test
+### Free Throw
 
 ```{r echo = FALSE}
-inputPanel(
-  selectInput("playr2", label = "Player",
-              choices = players$player_n)
-)
-
-renderPlot({
-
-hline <- list(
-  type = "line",
-  x0 = 0,
-  x1 = 1,
-  xref = "paper",
-  y0 = 15, 
-  y1 = 15, 
-  yref = "y",
-  line = list(color = "red", dash = "dash", width = 2)
-)
-
 
 meanseason25 <- season25 |> 
 mutate(player = case_when(
@@ -183,15 +156,28 @@ mutate(player = case_when(
     TRUE ~ player)) |>
     left_join(mean_shot, by = join_by(player == player_n))
 
-playerpoint <-  meanseason25 |>
-  filter(player == input$playr2)
+hline <- list(
+  type = "line",
+  x0 = 0,
+  x1 = 1,
+  xref = "paper",
+  y0 = 15, 
+  y1 = 15, 
+  yref = "y",
+  line = list(color = "red", dash = "dash", width = 2)
+)
 
+renderPlotly({
+  
 meanseason25|>
 plot_ly(x = ~free_throw_percent, y = ~mean_shot_ft, type = 'scatter', mode = 'markers', text = ~paste("Player: ", player, '<br>Team: ', team)) |>
       layout(xaxis = list(title = "Free Throw Percentage"),
-             yaxis = list(title = "Average Shot Distance (ft)"))
+             yaxis = list(title = "Average Shot Distance (ft)"),
+             shapes = hline)
+
 })
 ```
+
 
 # Teams
 
