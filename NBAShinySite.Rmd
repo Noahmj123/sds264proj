@@ -2,7 +2,7 @@
 title: "NBA Player Data"
 output:
   flexdashboard::flex_dashboard:
-    vertical_layout: scroll
+    #vertical_layout: scroll
     theme:
       version: 4
       bootswatch: cyborg
@@ -103,7 +103,7 @@ renderTable({
 })
 ```
 
-Column {data-width=500, data-height=300}
+Column {data-width=500, data-height=700}
 -------------------------------------
 
 ### Player Shot Chart
@@ -116,7 +116,7 @@ inputPanel(
 
 ```
 
-```{r echo = FALSE}
+```{r, echo = FALSE, fig.height=6}
 
 renderPlot({
   playd <-shot_map |>
@@ -169,11 +169,16 @@ hline <- list(
 
 renderPlotly({
   
+meanplayer <- meanseason25 |>
+    filter(player == input$playr)
+  
 meanseason25|>
 plot_ly(x = ~free_throw_percent, y = ~mean_shot_ft, type = 'scatter', mode = 'markers', text = ~paste("Player: ", player, '<br>Team: ', team)) |>
       layout(xaxis = list(title = "Free Throw Percentage"),
              yaxis = list(title = "Average Shot Distance (ft)"),
-             shapes = hline)
+             shapes = hline,
+             showlegend = FALSE) |>
+    add_trace(x = meanplayer$free_throw_percent, y = meanplayer$mean_shot_ft, type = "scatter", mode = "markers", color = I("red"), inherit = FALSE, name = "Player")
 
 })
 ```
