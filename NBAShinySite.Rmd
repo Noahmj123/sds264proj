@@ -304,70 +304,80 @@ renderPlot ({
     labs(
       x = "Field Goal Percentage",
       y = "Position"
-    )
+    ) +
+    theme(legend.position = "none")
   else if (input$player_stat == "Three Point Percentage")
     ggplot(season25, aes(x = three_point_percent, y = position, fill = position)) +
     geom_density_ridges() +
     labs(
       x = "Three Point Percentage",
       y = "Position"
-    )
+    ) +
+    theme(legend.position = "none")
   else if (input$player_stat == "Two Point Percentage")
     ggplot(season25, aes(x = two_point_percent, y = position, fill = position)) +
     geom_density_ridges() +
     labs(
       x = "Two Point Percentage",
       y = "Position"
-    )
+    ) +
+    theme(legend.position = "none")
   else if (input$player_stat == "Free Throw Percentage")
     ggplot(season25, aes(x = free_throw_percent, y = position, fill = position)) +
     geom_density_ridges() +
     labs(
       x = "Free Throw Percentage",
       y = "Position"
-    )
+    ) +
+    theme(legend.position = "none")
   else if (input$player_stat == "Total Rebounds")
     ggplot(season25, aes(x = total_rebounds, y = position, fill = position)) +
     geom_density_ridges() +
     labs(
       x = "Total Rebounds",
       y = "Position"
-    )
+    ) +
+    theme(legend.position = "none")
   else if (input$player_stat == "Assists")
     ggplot(season25, aes(x = assists, y = position, fill = position)) +
     geom_density_ridges() +
     labs(
       x = "Assists",
       y = "Position"
-    )
+    ) +
+    theme(legend.position = "none")
   else if (input$player_stat == "Steals")
     ggplot(season25, aes(x = steals, y = position, fill = position)) +
     geom_density_ridges() +
     labs(
       x = "Steals",
       y = "Position"
-    )
+    ) +
+    theme(legend.position = "none")
   else if (input$player_stat == "Blocks")
     ggplot(season25, aes(x = blocks, y = position, fill = position)) +
     geom_density_ridges() +
     labs(
       x = "Blocks",
       y = "Position"
-    )
+    ) +
+    theme(legend.position = "none")
   else if (input$player_stat == "Turnovers")
     ggplot(season25, aes(x = turnovers, y = position, fill = position)) +
     geom_density_ridges() +
     labs(
       x = "Turnovers",
       y = "Position"
-    )
+    ) +
+    theme(legend.position = "none")
   else if (input$player_stat == "Points")
     ggplot(season25, aes(x = points, y = position, fill = position)) +
     geom_density_ridges() +
     labs(
       x = "Points",
       y = "Position"
-    )
+    ) +
+    theme(legend.position = "none")
 })
 ```
 
