@@ -19,6 +19,7 @@ library(stringr)
 library(readr)
 library(plotly)
 library(ggridges)
+library(flexdashboard)
 mean_shot <- read_csv("mean_shot.csv")
 season25 <- read_csv("season25.csv")
 team_stats <- read_csv("team_stats.csv") |>
@@ -293,6 +294,9 @@ inputPanel(
 ### Distribution of Player Stats by Position
 
 ```{r, echo=FALSE}
+
+season25$position <- factor(season25$position, levels = c("C", "PF", "SF", "SG", "PG"))
+
 renderPlot ({
   if (input$player_stat == "Field Goal Percentage")
     ggplot(season25, aes(x = field_goal_percent, y = position, fill = position)) +
@@ -367,3 +371,4 @@ renderPlot ({
 })
 ```
 
+# Conclusions
