@@ -18,6 +18,7 @@ library(janitor)
 library(stringr)
 library(readr)
 library(plotly)
+library(ggridges)
 mean_shot <- read_csv("mean_shot.csv")
 season25 <- read_csv("season25.csv")
 team_stats <- read_csv("team_stats.csv") |>
@@ -263,6 +264,106 @@ team_stats |>
 plot_ly(x = ~-def_rating, y = ~net_wins, type = 'scatter', mode = 'markers', text = ~paste("Team: ", team, "<br>Team Defensive Rating (Inverse): ", points_per_g, "<br>Net Wins: ", net_wins, digits = 0)) |>
     layout(xaxis = list(title = "Team Defensive Rating"),
            yaxis = list(title = "Net Wins"))
+})
+```
+
+# Player Distribution
+
+## Inputs {.sidebar}
+
+```{r, echo=FALSE}
+inputPanel(
+  selectInput("player_stat", label = "Player Statistic:",
+              choices = c("Field Goal Percentage",
+                          "Three Point Percentage",
+                          "Two Point Percentage",
+                          "Free Throw Percentage",
+                          "Total Rebounds",
+                          "Assists",
+                          "Steals",
+                          "Blocks",
+                          "Turnovers",
+                          "Points"), 
+              selected = "Field Goal Percentage")
+)
+```
+
+## Column
+
+### I can't think of a good title lol
+
+```{r, echo=FALSE}
+renderPlot ({
+  if (input$player_stat == "Field Goal Percentage")
+    ggplot(season25, aes(x = field_goal_percent, y = position, fill = position)) +
+    geom_density_ridges() +
+    labs(
+      x = "Field Goal Percentage",
+      y = "Position"
+    )
+  else if (input$player_stat == "Three Point Percentage")
+    ggplot(season25, aes(x = three_point_percent, y = position, fill = position)) +
+    geom_density_ridges() +
+    labs(
+      x = "Three Point Percentage",
+      y = "Position"
+    )
+  else if (input$player_stat == "Two Point Percentage")
+    ggplot(season25, aes(x = two_point_percent, y = position, fill = position)) +
+    geom_density_ridges() +
+    labs(
+      x = "Two Point Percentage",
+      y = "Position"
+    )
+  else if (input$player_stat == "Free Throw Percentage")
+    ggplot(season25, aes(x = free_throw_percent, y = position, fill = position)) +
+    geom_density_ridges() +
+    labs(
+      x = "Free Throw Percentage",
+      y = "Position"
+    )
+  else if (input$player_stat == "Total Rebounds")
+    ggplot(season25, aes(x = total_rebounds, y = position, fill = position)) +
+    geom_density_ridges() +
+    labs(
+      x = "Total Rebounds",
+      y = "Position"
+    )
+  else if (input$player_stat == "Assists")
+    ggplot(season25, aes(x = assists, y = position, fill = position)) +
+    geom_density_ridges() +
+    labs(
+      x = "Assists",
+      y = "Position"
+    )
+  else if (input$player_stat == "Steals")
+    ggplot(season25, aes(x = steals, y = position, fill = position)) +
+    geom_density_ridges() +
+    labs(
+      x = "Steals",
+      y = "Position"
+    )
+  else if (input$player_stat == "Blocks")
+    ggplot(season25, aes(x = blocks, y = position, fill = position)) +
+    geom_density_ridges() +
+    labs(
+      x = "Blocks",
+      y = "Position"
+    )
+  else if (input$player_stat == "Turnovers")
+    ggplot(season25, aes(x = turnovers, y = position, fill = position)) +
+    geom_density_ridges() +
+    labs(
+      x = "Turnovers",
+      y = "Position"
+    )
+  else if (input$player_stat == "Points")
+    ggplot(season25, aes(x = points, y = position, fill = position)) +
+    geom_density_ridges() +
+    labs(
+      x = "Points",
+      y = "Position"
+    )
 })
 ```
 
