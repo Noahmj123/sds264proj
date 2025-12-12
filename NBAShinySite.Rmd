@@ -20,7 +20,8 @@ library(readr)
 library(plotly)
 mean_shot <- read_csv("mean_shot.csv")
 season25 <- read_csv("season25.csv")
-team_stats <- read_csv("team_stats.csv")
+team_stats <- read_csv("team_stats.csv") |>
+  mutate(net_wins = wins - losses)
 shot_map <- read_csv("shot_map.csv")
 ```
 
@@ -228,7 +229,38 @@ plot_ly(x = ~off_rating, y = ~-def_rating, type = 'scatter', mode = 'markers', t
 ```{r, echo=FALSE}
 inputPanel(
   selectInput("x_axis", label = "X-axis variable:",
-              choices = c("TBD", "Not sure yet.."), selected = "TBD")
+              choices = c("Team Points Per Game",
+                          "Points Allowed Per Game",
+                          "Team Offensive Rating",
+                          "Team Defensive Rating (Inverse)"), 
+              selected = "Team Points Per Game")
 )
+```
+
+## Column
+
+```{r, echo=FALSE}
+renderPlotly({
+  if (input$x_axis == "Team Points Per Game")
+team_stats |>
+plot_ly(x = ~points_per_g, y = ~net_wins, type = 'scatter', mode = 'markers', text = ~paste("Team: ", team, "<br>Team Points Per Game: ", points_per_g, "<br>Net Wins: ", net_wins, digits = 0)) |>
+    layout(xaxis = list(title = "Team Points Per Game"),
+           yaxis = list(title = "Net Wins"))
+  else if (input$x_axis == "Points Allowed Per Game")
+team_stats |>
+plot_ly(x = ~opp_points_per_g, y = ~net_wins, type = 'scatter', mode = 'markers', text = ~paste("Team: ", team, "<br>Points Allowed Per Game: ", points_per_g, "<br>Net Wins", net_wins, digits = 0)) |>
+    layout(xaxis = list(title = "Points Allowed Per Game"),
+           yaxis = list(title = "Net Wins"))
+  else if (input$x_axis == "Team Offensive Rating")
+team_stats |>
+plot_ly(x = ~off_rating, y = ~net_wins, type = 'scatter', mode = 'markers', text = ~paste("Team: ", team, "<br>Team Offensive Rating: ", points_per_g, "<br>Net Wins: ", net_wins, digits = 0)) |>
+    layout(xaxis = list(title = "Team Offensive Rating"),
+           yaxis = list(title = "Net Wins"))
+  else if (input$x_axis == "Team Defensive Rating (Inverse)")
+team_stats |>
+plot_ly(x = ~-def_rating, y = ~net_wins, type = 'scatter', mode = 'markers', text = ~paste("Team: ", team, "<br>Team Defensive Rating (Inverse): ", points_per_g, "<br>Net Wins: ", net_wins, digits = 0)) |>
+    layout(xaxis = list(title = "Team Defensive Rating"),
+           yaxis = list(title = "Net Wins"))
+})
 ```
 
