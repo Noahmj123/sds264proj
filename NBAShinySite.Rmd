@@ -290,7 +290,7 @@ inputPanel(
 
 ## Column
 
-### I can't think of a good title lol
+### Distribution of Player Stats by Position
 
 ```{r, echo=FALSE}
 renderPlot ({
