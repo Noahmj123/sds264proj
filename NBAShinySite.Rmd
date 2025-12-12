@@ -239,6 +239,8 @@ inputPanel(
 
 ## Column
 
+### Team Stats Against Net Wins
+
 ```{r, echo=FALSE}
 renderPlotly({
   if (input$x_axis == "Team Points Per Game")
