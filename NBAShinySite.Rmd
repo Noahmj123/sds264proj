@@ -87,26 +87,22 @@ renderTable({
   mean_shot |>
     arrange(-mean_shot_ft) |>
     rename(Player = player_n, "Average Shot(ft)" = mean_shot_ft) |> #Gives good table names
-    select(-last) |>
-    slice(1:50)
+    select(-last)
   else if(input$distg == "Low to High")
   mean_shot |>
     arrange(mean_shot_ft) |>
     rename(Player = player_n, "Average Shot(ft)" = mean_shot_ft) |>
-    select(-last) |>
-    slice(1:50)
+    select(-last)
   else if(input$distg == "A-Z")
   mean_shot |>
     arrange(last) |>
     rename(Player = player_n, "Average Shot(ft)" = mean_shot_ft) |>
-    select(-last) |>
-    slice(1:50)
+    select(-last)
   else if(input$distg == "Z-A")
   mean_shot |>
     arrange(desc(last)) |>
     rename(Player = player_n, "Average Shot(ft)" = mean_shot_ft) |>
-    select(-last) |>
-    slice(1:50)
+    select(-last)
 })
 ```
 
