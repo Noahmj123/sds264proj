@@ -207,6 +207,7 @@ inputPanel( # select tool for scatterplot
 )
 ```
 
+
 ## Column
 
 
@@ -388,3 +389,10 @@ renderPlot ({
 ```
 
 # Conclusions
+
+While our data dealt with a lot of the basics of NBA statistics, even scratching the surface can start to reveal some common trends in the data. It can be so easy to get lost with advanced statistics like True Shooting Percentage, Usage Rating, and PIE that people can forget how important and telling the basic statistics can be. Two teams that exceptionally stood out in this webpage are the Orlando Magic and the Oklahoma City Thunder. With OKC having been the NBA Champions of this year of statistics, it was no surprise to see them as the lead in almost every statistic, but it was shocking how far their gap truly was. They've already kept this dominance rolling into the current season as well, so in the coming years if they can maintain their core roster I think we are in the early stages of a dynasty. The Orlando Magic had the fourth lowest offensive efficiency in the league but maintained the second highest defensive efficiency, and an almost equal points per game and points allowed per game. With the NBA morphing more and more into an offensive heavy game its slightly refreshing to see a defensive heavy team still able to be playoff contenders and finish with a record of 0.500. Another interesting takeaway from our developments was how positively correlated shot distance and free throw percentage are. You would think players shooting from all distance need to have competence of shooting at the free throw line or that eventually it would kind of level out, but as players get more and more confident from distance they continue to shoot better from the line.
+
+
+
+
+
