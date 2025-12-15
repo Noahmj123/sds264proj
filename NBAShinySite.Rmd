@@ -191,6 +191,7 @@ plot_ly(x = ~free_throw_percent, y = ~mean_shot_ft, type = 'scatter', mode = 'ma
 ## Inputs {.sidebar}
 
 ```{r, echo=FALSE}
+#input panel that lets user choose between points scored vs. allowed or offensive rating vs. defensive rating (inverse)
 inputPanel(
   selectInput("group_choice", label = "Analyze by:",
               choices = c("Points", "Rating"), selected = "Rating")
@@ -198,8 +199,6 @@ inputPanel(
 ```
 
 ## Column
-
-
 
 ### Team Ratings and Points
 
@@ -210,9 +209,10 @@ df_line <- data.frame(
     )
 
 renderPlotly({
+#conditional plot that changes what it displays based on the choice from the input panel above
   if(input$group_choice == "Points")
 team_stats |>
-plot_ly(x = ~points_per_g, y = ~opp_points_per_g, type = 'scatter', mode = 'markers', text = ~paste("Team: ", team, '<br>Win%: ', round(wins/82, digits = 3))) |>
+plot_ly(x = ~points_per_g, y = ~opp_points_per_g, type = 'scatter', mode = 'markers', text = ~paste("Team: ", team, '<br>Win%: ', round(wins/82, digits = 3))) |> #win percentage calculated through taking the total number of wins and dividing that by 82
       layout(xaxis = list(title = "Team Points Per Game"),
              yaxis = list(title = "Team Points Allowed Per Game"))
   else if(input$group_choice == "Rating")
@@ -229,6 +229,7 @@ plot_ly(x = ~off_rating, y = ~-def_rating, type = 'scatter', mode = 'markers', t
 ## Inputs {.sidebar}
 
 ```{r, echo=FALSE}
+#input panel to choose which x-axis variable to compared to our y-axis variable net wins
 inputPanel(
   selectInput("x_axis", label = "X-axis variable:",
               choices = c("Team Points Per Game",
@@ -245,6 +246,7 @@ inputPanel(
 
 ```{r, echo=FALSE}
 renderPlotly({
+#conditional plot that changes what it displays based on the choice from the input panel above
   if (input$x_axis == "Team Points Per Game")
 team_stats |>
 plot_ly(x = ~points_per_g, y = ~net_wins, type = 'scatter', mode = 'markers', text = ~paste("Team: ", team, "<br>Team Points Per Game: ", points_per_g, "<br>Net Wins: ", net_wins, digits = 0)) |>
@@ -274,6 +276,7 @@ plot_ly(x = ~-def_rating, y = ~net_wins, type = 'scatter', mode = 'markers', tex
 
 ```{r, echo=FALSE}
 inputPanel(
+#input panel to choose which stat to compare the distribution of by position
   selectInput("player_stat", label = "Player Statistic:",
               choices = c("Field Goal Percentage",
                           "Three Point Percentage",
@@ -294,10 +297,11 @@ inputPanel(
 ### Distribution of Player Stats by Position
 
 ```{r, echo=FALSE}
-
+#reorders the names of the positions
 season25$position <- factor(season25$position, levels = c("C", "PF", "SF", "SG", "PG"))
 
 renderPlot ({
+#conditional plot that changes what it displays based on the choice from the input panel above
   if (input$player_stat == "Field Goal Percentage")
     ggplot(season25, aes(x = field_goal_percent, y = position, fill = position)) +
     geom_density_ridges() +
