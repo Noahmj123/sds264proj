@@ -20,6 +20,7 @@ library(readr)
 library(plotly)
 library(ggridges)
 library(flexdashboard)
+library(dplyr)
 mean_shot <- read_csv("mean_shot.csv")
 season25 <- read_csv("season25.csv")
 team_stats <- read_csv("team_stats.csv") |>
@@ -58,11 +59,11 @@ renderImage({
 # Shot Distance
 
 ```{r, include = FALSE}
-players <- shot_map |>
+players <- shot_map |> #makes player name list
   group_by(player_n) |>
   summarize(n = n()) |>
   select(player_n) |>
-  mutate(last = str_remove(player_n, "^.* "))
+  mutate(last = str_remove(player_n, "^.* "))#grabs last name
 
 mean_shot <- mean_shot |>
   mutate(last = str_remove(player_n, "^.* "))
@@ -77,7 +78,7 @@ inputPanel(
   selectInput("distg", label = "Sort By:",
               choices = c("High to Low", "Low to High", "A-Z", "Z-A"), selected = "High to Low")
 )
-
+# Drop down menu for sorting table
 ```
 
 ```{r echo = FALSE}
@@ -85,7 +86,7 @@ renderTable({
  if(input$distg == "High to Low")
   mean_shot |>
     arrange(-mean_shot_ft) |>
-    rename(Player = player_n, "Average Shot(ft)" = mean_shot_ft) |>
+    rename(Player = player_n, "Average Shot(ft)" = mean_shot_ft) |> #Gives good table names
     select(-last)
   else if(input$distg == "Low to High")
   mean_shot |>
@@ -105,13 +106,13 @@ renderTable({
 })
 ```
 
-Column {data-width=500, data-height=700}
+Column {.tabset}
 -------------------------------------
 
 ### Player Shot Chart
 
 ```{r echo = FALSE}
-inputPanel(
+inputPanel( #input for individual players
   selectInput("playr", label = "Player",
               choices = players$player_n)
 )
@@ -121,14 +122,14 @@ inputPanel(
 ```{r, echo = FALSE, fig.height=6}
 
 renderPlot({
-  playd <-shot_map |>
+  playd <-shot_map |> # grabs only player selected
     filter(player_n == input$playr)
 
 geom_basketball(league = "NBA", display_range = "offense", rotation = 270) +
 geom_point(data = playd, aes(x = coordinate_y, y = -coordinate_x, color = result), show.legend = FALSE) +
-  scale_colour_manual(values = c("green", "red")) +
+  scale_colour_manual(values = c("green", "red")) + #makes and misses colors coordinated
   theme(legend.key = element_blank(), 
-        plot.background = element_rect(fill = "black", color = "black"),
+        plot.background = element_rect(fill = "black", color = "black"), # smooths out plot edges
         panel.background = element_rect(fill = "black",color = "black"),
         plot.margin = margin(t = 20,
                              r = 50,
@@ -144,9 +145,18 @@ geom_point(data = playd, aes(x = coordinate_y, y = -coordinate_x, color = result
 ### Free Throw
 
 ```{r echo = FALSE}
+inputPanel( #input for individual players
+  selectInput("playr2", label = "Player",
+              choices = players$player_n)
+)
+
+```
+
+
+```{r echo = FALSE}
 
 meanseason25 <- season25 |> 
-mutate(player = case_when(
+mutate(player = case_when( #adds back players with non english alphabet letters
     player == "Bogdan Bogdanović" ~ "Bogdan Bogdanovic",
     player == "Luka Dončić" ~ "Luka Doncic",
     player == "Nikola Jokić" ~ "Nikola Jokic",
@@ -158,7 +168,7 @@ mutate(player = case_when(
     TRUE ~ player)) |>
     left_join(mean_shot, by = join_by(player == player_n))
 
-hline <- list(
+hline <- list( # adds line of free throw length
   type = "line",
   x0 = 0,
   x1 = 1,
@@ -169,10 +179,10 @@ hline <- list(
   line = list(color = "red", dash = "dash", width = 2)
 )
 
-renderPlotly({
+renderPlotly({ #interactive plot function
   
 meanplayer <- meanseason25 |>
-    filter(player == input$playr)
+    filter(player == input$playr2)
   
 meanseason25|>
 plot_ly(x = ~free_throw_percent, y = ~mean_shot_ft, type = 'scatter', mode = 'markers', text = ~paste("Player: ", player, '<br>Team: ', team)) |>
@@ -180,7 +190,7 @@ plot_ly(x = ~free_throw_percent, y = ~mean_shot_ft, type = 'scatter', mode = 'ma
              yaxis = list(title = "Average Shot Distance (ft)"),
              shapes = hline,
              showlegend = FALSE) |>
-    add_trace(x = meanplayer$free_throw_percent, y = meanplayer$mean_shot_ft, type = "scatter", mode = "markers", color = I("red"), inherit = FALSE, name = "Player")
+    add_trace(x = meanplayer$free_throw_percent, y = meanplayer$mean_shot_ft, type = "scatter", mode = "markers", color = I("red"), inherit = FALSE, name = "Player") #inputs free throw line length
 
 })
 ```
@@ -192,7 +202,7 @@ plot_ly(x = ~free_throw_percent, y = ~mean_shot_ft, type = 'scatter', mode = 'ma
 
 ```{r, echo=FALSE}
 #input panel that lets user choose between points scored vs. allowed or offensive rating vs. defensive rating (inverse)
-inputPanel(
+inputPanel( # select tool for scatterplot
   selectInput("group_choice", label = "Analyze by:",
               choices = c("Points", "Rating"), selected = "Rating")
 )
@@ -203,10 +213,6 @@ inputPanel(
 ### Team Ratings and Points
 
 ```{r echo = FALSE}
-df_line <- data.frame(
-      x_line = 1:200,
-      y_line = 1:200
-    )
 
 renderPlotly({
 #conditional plot that changes what it displays based on the choice from the input panel above
@@ -386,3 +392,9 @@ renderPlot ({
 ```
 
 # Conclusions
+
+While our data dealt with a lot of the basics of NBA statistics, even scratching the surface can start to reveal some common trends in the data. It can be so easy to get lost with advanced statistics like True Shooting Percentage, Usage Rating, and PIE that people can forget how important and telling the basic statistics can be. Two teams that exceptionally stood out in this webpage are the Orlando Magic and the Oklahoma City Thunder. With OKC having been the NBA Champions of this year of statistics, it was no surprise to see them as the lead in almost every statistic, but it was shocking how far their gap truly was. They've already kept this dominance rolling into the current season as well, so in the coming years if they can maintain their core roster I think we are in the early stages of a dynasty. The Orlando Magic had the fourth lowest offensive efficiency in the league but maintained the second highest defensive efficiency, and an almost equal points per game and points allowed per game. With the NBA morphing more and more into an offensive heavy game its slightly refreshing to see a defensive heavy team still able to be playoff contenders and finish with a record of 0.500. Another interesting takeaway from our developments was how positively correlated shot distance and free throw percentage are. You would think players shooting from all distance need to have competence of shooting at the free throw line or that eventually it would kind of level out, but as players get more and more confident from distance they continue to shoot better from the line.
+
+Our data was captured by scrapping from basketball reference as well as using the R package hoopR to obtain play-by-play data. Scrapping from basketball reference can be quite the pain to get specific statistics as basketball reference uses their own system to ID players, and with no easily accessible data set for those IDs most of them had to be recorded by hand to be scrapped. Because of this limitation, for the sake of time we only took 150 key players from the 2025 season so there are a lot of bench/role players who were not able to be included in the data. There was a similar problem with IDs for teams, but luckily a lot of them use the standard three letter code for teams (ex: MIN, SAC, DAL). If we were to revisit this project we would most likely include a bunch more statistics for teams as well as more advanced and obscure statistics for players. This would allow us to maybe try and categorize stronger predictors of specific variables in players. 
+
+It's very satisfying to be able to select a specific player and see their shot map as well as the difference in statistics by position. This webpage allows a lot of insight for any basketball stat-head and shows some of the cool things that can be done with flexdashboards and shiny. We hope you enjoyed!
